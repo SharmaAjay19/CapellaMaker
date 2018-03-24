@@ -1,87 +1,65 @@
 package com.ajsharm.capellamaker;
 
+import android.content.Context;
 import android.content.DialogInterface;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
+    Button newProjectButton;
+    EditText newProjectName;
     AlertDialog.Builder alertDialog;
-    MediaRecorder mediaRecorder;
-    MediaPlayer mediaPlayer;
-    Button recordButton;
-    Button playButton;
-    String audioFilePath;
+    AllProjects projectList;
+    String projectsFilePath;
+    Helpers helpers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recordButton = (Button) findViewById(R.id.recordButton);
-        playButton = (Button) findViewById(R.id.playButton);
-        audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Record1.mp3";
-        playButton.setEnabled(false);
-        mediaRecorder = new MediaRecorder();
-        mediaPlayer = new MediaPlayer();
+        helpers = new Helpers();
         alertDialog = new AlertDialog.Builder(this);
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setOutputFile(audioFilePath);
-        recordButton.setOnClickListener(new View.OnClickListener() {
+        newProjectButton = (Button) findViewById(R.id.newProjectButton);
+        newProjectName = (EditText) findViewById(R.id.newProjectName);
+        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/projects.json";
+        projectList = helpers.readFromFile(projectsFilePath);
+        if (projectList == null){
+            projectList = new AllProjects();
+            helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+        }
+        newProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onRecordClick();
-            }
-        });
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPlayClick();
+                onNewProjectClick();
             }
         });
     }
 
-    public void onRecordClick(){
-        if (recordButton.getText().equals("RECORD")) {
-            try {
-                mediaRecorder.prepare();
-                recordButton.setEnabled(true);
-                recordButton.setText("STOP");
-                mediaRecorder.start();
-            } catch (Exception e) {
-                alert(e.toString());
-            }
-        } else if (recordButton.getText().equals("STOP")) {
-            mediaRecorder.stop();
-            mediaRecorder.release();
-            playButton.setEnabled(true);
-            recordButton.setText("RECORD");
+    public void onNewProjectClick(){
+        if (newProjectName.getText() == null || newProjectName.getText().equals("ProjectName")){
+            alert("Please provide a valid project name");
+            return;
         }
-    }
-
-    public void onPlayClick(){
-        if (playButton.getText().equals("PLAY")) {
-            playButton.setText("STOP");
-            recordButton.setEnabled(false);
-            try {
-                mediaPlayer.setDataSource(audioFilePath);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-            }
-            catch(Exception e) {}
-        }
-        else if (playButton.getText().equals("STOP")){
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            recordButton.setEnabled(true);
-            playButton.setText("PLAY");
+        else {
+            Intent i = new Intent(this, NewProjectActivity.class);
+            i.putExtra("projectName", newProjectName.getText());
+            startActivityForResult(i, 0);
         }
     }
 

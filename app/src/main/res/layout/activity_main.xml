@@ -7,27 +7,59 @@
     android:layout_height="match_parent"
     tools:context="com.ajsharm.capellamaker.MainActivity">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="495dp"
-        android:orientation="horizontal"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
-        <Button
-            android:id="@+id/recordButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="RECORD"
-            tools:layout_editor_absoluteX="-3dp"
-            tools:layout_editor_absoluteY="16dp" />
+            <LinearLayout
+                android:layout_width="377dp"
+                android:layout_height="496dp"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteY="7dp"
+                tools:layout_editor_absoluteX="8dp">
 
-        <Button
-            android:id="@+id/playButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PLAY"
-            tools:layout_editor_absoluteX="-1dp"
-            tools:layout_editor_absoluteY="64dp" />
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/newProjectButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NEW" />
+
+                    <EditText
+                        android:id="@+id/newProjectName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ProjectName" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/yourProjects"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Your Projects"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <ListView
+                        android:id="@+id/yourProjectsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+            </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

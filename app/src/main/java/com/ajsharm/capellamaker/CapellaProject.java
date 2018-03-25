@@ -15,25 +15,25 @@ import java.util.List;
 class ProjectTrack{
     @SerializedName("track")
     public CapellaTrack track;
-    @SerializedName("DelayMs")
+    @SerializedName("delayMs")
     public int DelayMs;
-    @SerializedName("Effect")
+    @SerializedName("effect")
     public String Effect;
-    @SerializedName("IsMute")
+    @SerializedName("isMute")
     public Boolean IsMute;
 }
 
 public class CapellaProject {
     @SerializedName("projectName")
-    private String projectName;
+    public String projectName;
     @SerializedName("createdDate")
-    private String createdDate;
+    public String createdDate;
     @SerializedName("updatedDate")
-    private String updatedDate;
+    public String updatedDate;
     @SerializedName("tracks")
-    private List<ProjectTrack> tracks;
+    public ArrayList<ProjectTrack> tracks;
     @SerializedName("maxTracks")
-    private int maxTracks;
+    public int maxTracks;
 
     public CapellaProject(String projectName){
         this.projectName = projectName;

@@ -67,7 +67,7 @@ public class Helpers {
 
     private void writeToFile(String data,Context context, String filePath) {
         try {
-            File root = new File(Environment.getExternalStorageDirectory(), "");
+            File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker", "");
             if (!root.exists()) {
                 root.mkdirs();
             }

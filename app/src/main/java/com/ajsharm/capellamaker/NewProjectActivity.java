@@ -33,7 +33,7 @@ public class NewProjectActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_project);
-        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/projects.json";
+        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/projects.json";
         helpers = new Helpers();
         projectList = helpers.readFromFile(projectsFilePath);
         Bundle extras = getIntent().getExtras();
@@ -47,8 +47,9 @@ public class NewProjectActivity extends AppCompatActivity {
             finish();
         }
         project = new CapellaProject(projectName);
+        projectList.projects.add(project);
         helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
-        helpers.createDirIfNotExists(projectName + "/tracks");
+        helpers.createDirIfNotExists(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/" + projectName + "/tracks");
         addTrackButton = (Button) findViewById(R.id.addTrackButton);
         recordButton = (Button) findViewById(R.id.recordButton);
         playButton = (Button) findViewById(R.id.playButton);
@@ -105,7 +106,7 @@ public class NewProjectActivity extends AppCompatActivity {
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
                 mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-                audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + projectName + "/tracks/" + newtrackName.getText() + ".mp3";
+                audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/" + projectName + "/tracks/" + newtrackName.getText() + ".mp3";
                 mediaRecorder.setOutputFile(audioFilePath);
                 mediaRecorder.prepare();
                 recordButton.setEnabled(true);

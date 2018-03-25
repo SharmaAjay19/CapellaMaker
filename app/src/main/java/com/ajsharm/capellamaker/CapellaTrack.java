@@ -7,10 +7,10 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class CapellaTrack {
-    @SerializedName("TrackId")
+    @SerializedName("trackId")
     public String TrackId;
-    @SerializedName("TrackName")
+    @SerializedName("trackName")
     public String TrackName;
-    @SerializedName("FilePath")
+    @SerializedName("filePath")
     public String FilePath;
 }

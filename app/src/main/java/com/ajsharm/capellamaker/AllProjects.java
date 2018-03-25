@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.List;
 /**
  * Created by ajsharm on 3/24/2018.
@@ -20,5 +21,9 @@ import java.util.List;
 
 public class AllProjects {
     @SerializedName("projects")
-    public List<CapellaProject> projects;
+    public ArrayList<CapellaProject> projects;
+
+    public AllProjects(){
+        projects = new ArrayList<CapellaProject>();
+    }
 }

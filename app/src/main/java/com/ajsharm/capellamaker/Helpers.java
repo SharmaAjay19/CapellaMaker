@@ -3,12 +3,15 @@ package com.ajsharm.capellamaker;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,7 +37,7 @@ public class Helpers {
         Gson gson = new Gson();
         try{
             String content = gson.toJson(projectList);
-            writeToFile(content, context);
+            writeToFile(content, context, filePath);
             return;
         }
         catch(Exception e){
@@ -62,14 +65,21 @@ public class Helpers {
         return ret;
     }
 
-    private void writeToFile(String data,Context context) {
+    private void writeToFile(String data,Context context, String filePath) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+            File root = new File(Environment.getExternalStorageDirectory(), "");
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+            File myFile = new File(filePath);
+            FileWriter writer = new FileWriter(myFile);
+            writer.append(data);
+            writer.flush();
+            writer.close();
+            Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(context, "Failed " + e.toString(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
         }
     }
 

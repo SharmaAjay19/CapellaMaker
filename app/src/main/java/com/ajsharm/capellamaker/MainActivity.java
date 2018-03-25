@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             Intent i = new Intent(this, NewProjectActivity.class);
-            i.putExtra("projectName", newProjectName.getText());
+            i.putExtra("projectName", newProjectName.getText().toString());
             startActivityForResult(i, 0);
         }
     }

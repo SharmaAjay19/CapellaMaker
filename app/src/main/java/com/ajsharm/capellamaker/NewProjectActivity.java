@@ -48,7 +48,7 @@ public class NewProjectActivity extends AppCompatActivity {
         }
         project = new CapellaProject(projectName);
         helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
-        helpers.createDirIfNotExists(projectName + "/anyfile.json");
+        helpers.createDirIfNotExists(projectName + "/tracks");
         addTrackButton = (Button) findViewById(R.id.addTrackButton);
         recordButton = (Button) findViewById(R.id.recordButton);
         playButton = (Button) findViewById(R.id.playButton);
@@ -105,7 +105,7 @@ public class NewProjectActivity extends AppCompatActivity {
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
                 mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-                audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + projectName + "/" + newtrackName.getText() + ".mp3";
+                audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + projectName + "/tracks/" + newtrackName.getText() + ".mp3";
                 mediaRecorder.setOutputFile(audioFilePath);
                 mediaRecorder.prepare();
                 recordButton.setEnabled(true);

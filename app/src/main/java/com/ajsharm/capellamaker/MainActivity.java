@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -62,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
         }
         adapter = new ArrayAdapter(this, R.layout.project_list_layout, data);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String ProjectName = listView.getAdapter().getItem(position).toString();
+                onExistingProjectClick(ProjectName);
+            }
+        });
         newProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,10 +84,25 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         else {
-            Intent i = new Intent(this, NewProjectActivity.class);
-            i.putExtra("projectName", newProjectName.getText().toString());
+            String projectName = newProjectName.getText().toString();
+            //Create new project, add it to list and dump to file.
+            CapellaProject project = new CapellaProject(projectName);
+            projectList.projects.add(project);
+            helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+
+            //Create project directory and tracks folder
+            String projectFolderPath = "CapellaMaker/" + projectName;
+            helpers.createDirIfNotExists(projectFolderPath + "/tracks/");
+            Intent i = new Intent(this, ProjectActivity.class);
+            i.putExtra("projectName", projectName);
             startActivityForResult(i, 0);
         }
+    }
+
+    public void onExistingProjectClick(String projectName){
+        Intent i = new Intent(this, ProjectActivity.class);
+        i.putExtra("projectName", projectName);
+        startActivityForResult(i, 0);
     }
 
     public void alert(String message){

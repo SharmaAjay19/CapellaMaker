@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class NewProjectActivity extends AppCompatActivity {
+public class ProjectActivity extends AppCompatActivity {
     AllProjects projectList;
     String projectsFilePath;
     String projectFolderPath;
@@ -56,14 +57,11 @@ public class NewProjectActivity extends AppCompatActivity {
             finish();
         }
 
-        //Create new project, add it to list and dump to file.
-        project = new CapellaProject(projectName);
-        projectList.projects.add(project);
-        helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
-
-        //Create project directory and tracks folder
-        projectFolderPath = "CapellaMaker/" + projectName;
-        helpers.createDirIfNotExists(projectFolderPath + "/tracks/");
+        for(int i=0; i<projectList.projects.size(); i++){
+            if(projectList.projects.get(i).projectName.equals(projectName)){
+                project = projectList.projects.get(i);
+            }
+        }
 
         //SHOW Tracks
         renderTrackList();
@@ -79,6 +77,7 @@ public class NewProjectActivity extends AppCompatActivity {
         playButton.setEnabled(false);
         confirmButton.setEnabled(false);
         alertDialog = new AlertDialog.Builder(this);
+
         addTrackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +103,7 @@ public class NewProjectActivity extends AppCompatActivity {
             }
         });
     }
+
     public void onNewTrackClick(){
         if (newtrackName.getText() == null || newtrackName.getText().equals("Track Name")){
             alert("Please enter a valid track name");
@@ -169,7 +169,7 @@ public class NewProjectActivity extends AppCompatActivity {
         newTrack.Effect = "NONE";
         newTrack.IsMute = false;
         CapellaTrack track = new CapellaTrack();
-        track.FilePath = audioFilePath;
+        track.FilePath = audioFilePath.toString();
         track.TrackName = newtrackName.getText().toString();
         track.TrackId = UUID.randomUUID().toString();
         newTrack.track = track;
@@ -186,6 +186,31 @@ public class NewProjectActivity extends AppCompatActivity {
         }
         ArrayAdapter adapter = new ArrayAdapter(this, R.layout.track_list_layout, data);
         trackList.setAdapter(adapter);
+        trackList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                String trackName = trackList.getAdapter().getItem(position).toString();
+                CapellaTrack playTrack = null;
+                for(int i=0; i<project.tracks.size(); i++){
+                    if (project.tracks.get(i).track.TrackName.equals(trackName)){
+                        playTrack = project.tracks.get(i).track;
+                    }
+                }
+                if (playTrack != null){
+                    playMusic(playTrack.FilePath);
+                }
+            }
+        });
+    }
+
+    public void playMusic(String path){
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(path);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        }
+        catch(Exception e) {}
     }
 
     public void alert(String message){

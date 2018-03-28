@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        helpers.createDirIfNotExists(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker");
+        helpers.createDirIfNotExists("CapellaMaker");
         helpers = new Helpers();
         alertDialog = new AlertDialog.Builder(this);
         listView = (ListView) findViewById(R.id.yourProjectsList);
@@ -49,10 +49,12 @@ public class MainActivity extends AppCompatActivity {
         newProjectName = (EditText) findViewById(R.id.newProjectName);
         projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/projects.json";
         projectList = helpers.readFromFile(projectsFilePath);
-        alert(Integer.toString(projectList.projects.size()) + " projects loaded!");
         if (projectList == null){
             projectList = new AllProjects();
             helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+        }
+        else{
+            alert(Integer.toString(projectList.projects.size()) + " projects loaded!");
         }
         ArrayList<String> data = new ArrayList<String>();
         for(int i=0; i<projectList.projects.size(); i++){

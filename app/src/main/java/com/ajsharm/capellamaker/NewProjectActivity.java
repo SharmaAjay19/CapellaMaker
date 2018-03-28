@@ -9,14 +9,18 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class NewProjectActivity extends AppCompatActivity {
     AllProjects projectList;
     String projectsFilePath;
+    String projectFolderPath;
     String projectName;
     CapellaProject project;
     AlertDialog.Builder alertDialog;
@@ -27,15 +31,20 @@ public class NewProjectActivity extends AppCompatActivity {
     Button playButton;
     Button confirmButton;
     EditText newtrackName;
+    ListView trackList;
     String audioFilePath;
     Helpers helpers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_project);
+
+        //Read the list of all projects
         projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/projects.json";
         helpers = new Helpers();
         projectList = helpers.readFromFile(projectsFilePath);
+
+        //Get the new project name
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String pName = extras.getString("projectName");
@@ -46,10 +55,20 @@ public class NewProjectActivity extends AppCompatActivity {
             setResult(0);
             finish();
         }
+
+        //Create new project, add it to list and dump to file.
         project = new CapellaProject(projectName);
         projectList.projects.add(project);
         helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
-        helpers.createDirIfNotExists(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/" + projectName + "/tracks");
+
+        //Create project directory and tracks folder
+        projectFolderPath = "CapellaMaker/" + projectName;
+        helpers.createDirIfNotExists(projectFolderPath + "/tracks/");
+
+        //SHOW Tracks
+        renderTrackList();
+
+        //Application logic
         addTrackButton = (Button) findViewById(R.id.addTrackButton);
         recordButton = (Button) findViewById(R.id.recordButton);
         playButton = (Button) findViewById(R.id.playButton);
@@ -155,6 +174,18 @@ public class NewProjectActivity extends AppCompatActivity {
         track.TrackId = UUID.randomUUID().toString();
         newTrack.track = track;
         project.AddTrack(newTrack);
+        helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+        renderTrackList();
+    }
+
+    public void renderTrackList(){
+        trackList = (ListView) findViewById(R.id.trackList);
+        ArrayList<String> data = new ArrayList<String>();
+        for (int i=0; i<project.tracks.size(); i++){
+            data.add(project.tracks.get(i).track.TrackName);
+        }
+        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.track_list_layout, data);
+        trackList.setAdapter(adapter);
     }
 
     public void alert(String message){

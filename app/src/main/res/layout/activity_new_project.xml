@@ -56,10 +56,17 @@
                 android:layout_height="wrap_content"
                 android:text="CONFIRM" />
         </LinearLayout>
+        <LinearLayout
+        android:id="@+id/trackListViewLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
 
         <ListView
             android:id="@+id/trackList"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+        </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

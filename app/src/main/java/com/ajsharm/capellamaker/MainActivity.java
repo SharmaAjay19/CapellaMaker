@@ -1,33 +1,16 @@
 package com.ajsharm.capellamaker;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Button newProjectButton;
@@ -51,9 +34,6 @@ public class MainActivity extends AppCompatActivity {
         if (projectList == null){
             projectList = new AllProjects();
             Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
-        }
-        else{
-            alert(Integer.toString(projectList.projects.size()) + " projects loaded!");
         }
         renderProjectList();
         newProjectButton.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onExistingProjectClick(String projectName){
+        Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
         Intent i = new Intent(this, ProjectActivity.class);
         i.putExtra("projectName", projectName);
         startActivityForResult(i, 0);

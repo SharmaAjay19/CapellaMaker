@@ -16,9 +16,6 @@ import java.util.List;
  */
 
 public class TrackListAdapter extends ArrayAdapter<ProjectTrack> {
-    int resource;
-    int textId;
-    int buttonId;
     public TrackListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }

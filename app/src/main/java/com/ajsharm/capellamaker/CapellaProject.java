@@ -1,13 +1,10 @@
 package com.ajsharm.capellamaker;
 
-import android.graphics.Paint;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by ajsharm on 3/24/2018.

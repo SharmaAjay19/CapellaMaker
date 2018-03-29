@@ -121,9 +121,7 @@ public class Helpers {
             writer.append(data);
             writer.flush();
             writer.close();
-            Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            Toast.makeText(context, "Failed " + e.toString(), Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }

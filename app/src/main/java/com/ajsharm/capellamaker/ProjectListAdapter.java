@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 /**
@@ -45,12 +44,6 @@ public class ProjectListAdapter extends ArrayAdapter<CapellaProject> {
             Button button = (Button) v.findViewById(R.id.deleteButton);
             if (textLabel != null) {
                 textLabel.setText(p.projectName);
-                /*textLabel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(getContext(), "Showing " + p.projectName, Toast.LENGTH_SHORT).show();
-                    }
-                });*/
             }
 
             if (button != null) {

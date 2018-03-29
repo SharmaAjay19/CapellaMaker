@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alertDialog;
     AllProjects projectList;
     String projectsFilePath;
-    ArrayAdapter adapter;
+    ProjectListAdapter projectListAdapter;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,23 +55,23 @@ public class MainActivity extends AppCompatActivity {
         else{
             alert(Integer.toString(projectList.projects.size()) + " projects loaded!");
         }
-        ArrayList<String> data = new ArrayList<String>();
-        for(int i=0; i<projectList.projects.size(); i++){
-            data.add(projectList.projects.get(i).projectName);
-        }
-        adapter = new ArrayAdapter(this, R.layout.project_list_layout, data);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String ProjectName = listView.getAdapter().getItem(position).toString();
-                onExistingProjectClick(ProjectName);
-            }
-        });
+        renderProjectList();
         newProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onNewProjectClick();
+            }
+        });
+    }
+
+    public void renderProjectList(){
+        projectListAdapter = new ProjectListAdapter(this, R.layout.project_list_layout, projectList.projects);
+        listView.setAdapter(projectListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                CapellaProject Project = (CapellaProject) listView.getAdapter().getItem(position);
+                onExistingProjectClick(Project.projectName);
             }
         });
     }
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             CapellaProject project = new CapellaProject(projectName);
             projectList.projects.add(project);
             Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
-
+            renderProjectList();
             //Create project directory and tracks folder
             String projectFolderPath = getString(R.string.app_name) + "/" + projectName;
             Helpers.createDirIfNotExists(projectFolderPath + "/tracks/");
@@ -95,6 +95,20 @@ public class MainActivity extends AppCompatActivity {
             i.putExtra("projectName", projectName);
             startActivityForResult(i, 0);
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        projectList = Helpers.readFromFile(projectsFilePath);
+        renderProjectList();
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+        Helpers.fileSync(getApplicationContext(), projectList, getString(R.string.app_name));
     }
 
     public void onExistingProjectClick(String projectName){

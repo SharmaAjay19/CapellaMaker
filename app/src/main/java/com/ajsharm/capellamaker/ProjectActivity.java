@@ -25,6 +25,7 @@ public class ProjectActivity extends AppCompatActivity {
     String projectFolderPath;
     String projectName;
     CapellaProject project;
+    int projectIndex;
     AlertDialog.Builder alertDialog;
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
@@ -64,6 +65,7 @@ public class ProjectActivity extends AppCompatActivity {
         for(int i=0; i<projectList.projects.size(); i++){
             if(projectList.projects.get(i).projectName.equals(projectName)){
                 project = projectList.projects.get(i);
+                projectIndex = i;
             }
         }
 
@@ -221,6 +223,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     public void saveProject(){
+        alert(projectList.toString());
         Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
     }
 
@@ -243,22 +246,6 @@ public class ProjectActivity extends AppCompatActivity {
         trackList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 
-    public void playMusic(String path){
-        try {
-            if(mediaPlayer == null){
-                mediaPlayer = new MediaPlayer();
-            }
-            else{
-                mediaPlayer.release();
-                mediaPlayer = new MediaPlayer();
-            }
-            mediaPlayer.setDataSource(path);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        }
-        catch(Exception e) {}
-    }
-
     public void alert(String message){
         alertDialog.setMessage(message);
         alertDialog.setTitle("Alert");
@@ -269,5 +256,13 @@ public class ProjectActivity extends AppCompatActivity {
         });
         alertDialog.setCancelable(true);
         alertDialog.create().show();
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        Helpers.stopMusic();
+        setResult(0);
+        finish();
     }
 }

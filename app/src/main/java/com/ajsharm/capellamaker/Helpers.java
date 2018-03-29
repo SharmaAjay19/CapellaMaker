@@ -3,8 +3,6 @@ package com.ajsharm.capellamaker;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -12,12 +10,11 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 /**
  * Created by ajsharm on 3/24/2018.
@@ -39,6 +36,46 @@ public class Helpers {
         catch(Exception e) {
             return null;
         }
+    }
+
+    public static void fileSync(Context context, AllProjects projectList, String rootName){
+        ArrayList allProjects = new ArrayList<String>();
+        ArrayList allTracks = new ArrayList<String>();
+        for(CapellaProject proj: projectList.projects){
+            allProjects.add(proj.projectName);
+            for(ProjectTrack track: proj.tracks){
+                allTracks.add(track.track.FilePath);
+            }
+        }
+        String path = Environment.getExternalStorageDirectory() + "/" + rootName;
+        File f = new File(path);
+        File[] files = f.listFiles();
+        for (File inFile : files) {
+            if (inFile.isDirectory()) {
+                if (allProjects.indexOf(inFile.getName()) >= 0){
+                    File trackFolder = new File(inFile.getAbsolutePath() + "/" + "tracks");
+                    File[] trackPaths = trackFolder.listFiles();
+                    for (File filePath: trackPaths){
+                        if (allTracks.indexOf(filePath.getAbsolutePath()) >= 0){
+                            continue;
+                        }
+                        else{
+                            filePath.delete();
+                        }
+                    }
+                }
+                else{
+                    deleteRecursive(inFile);
+                }
+            }
+        }
+    }
+
+    public static void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+        fileOrDirectory.delete();
     }
 
     public static void dumpToFile(String filePath, AllProjects projectList, Context context){
@@ -128,5 +165,11 @@ public class Helpers {
             mediaPlayer.start();
         }
         catch(Exception e) {}
+    }
+
+    public static void stopMusic(){
+        if (mediaPlayer != null){
+            mediaPlayer.release();
+        }
     }
 }

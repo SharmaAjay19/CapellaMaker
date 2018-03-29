@@ -1,5 +1,9 @@
 package com.ajsharm.capellamaker;
 
+/**
+ * Created by ajsharm on 3/29/2018.
+ */
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,20 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
-
 /**
  * Created by ajsharm on 3/25/2018.
  */
 
-public class TrackListAdapter extends ArrayAdapter<ProjectTrack> {
-    int resource;
-    int textId;
-    int buttonId;
-    public TrackListAdapter(Context context, int textViewResourceId) {
+public class ProjectListAdapter extends ArrayAdapter<CapellaProject> {
+    public ProjectListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public TrackListAdapter(Context context, int resource, List<ProjectTrack> items) {
+    public ProjectListAdapter(Context context, int resource, List<CapellaProject> items) {
         super(context, resource, items);
     }
 
@@ -35,23 +35,22 @@ public class TrackListAdapter extends ArrayAdapter<ProjectTrack> {
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.track_list_layout, null);
+            v = vi.inflate(R.layout.project_list_layout, null);
         }
 
-        final ProjectTrack p = getItem(position);
+        final CapellaProject p = getItem(position);
 
         if (p != null) {
-            TextView textLabel = (TextView) v.findViewById(R.id.trackLabel);
+            TextView textLabel = (TextView) v.findViewById(R.id.projectLabel);
             Button button = (Button) v.findViewById(R.id.deleteButton);
             if (textLabel != null) {
-                textLabel.setText(p.track.TrackName);
-                textLabel.setOnClickListener(new View.OnClickListener() {
+                textLabel.setText(p.projectName);
+                /*textLabel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getContext(), "Playing " + p.track.TrackName, Toast.LENGTH_LONG).show();
-                        Helpers.playMusic(p.track.FilePath);
+                        Toast.makeText(getContext(), "Showing " + p.projectName, Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
             }
 
             if (button != null) {

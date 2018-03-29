@@ -31,10 +31,12 @@ public class ProjectActivity extends AppCompatActivity {
     Button recordButton;
     Button playButton;
     Button confirmButton;
+    Button discardButton;
     EditText newtrackName;
     ListView trackList;
     String audioFilePath;
     Helpers helpers;
+    Boolean trackPlaying;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,8 @@ public class ProjectActivity extends AppCompatActivity {
             finish();
         }
 
+        projectFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/" + projectName + "/";
+
         for(int i=0; i<projectList.projects.size(); i++){
             if(projectList.projects.get(i).projectName.equals(projectName)){
                 project = projectList.projects.get(i);
@@ -67,15 +71,17 @@ public class ProjectActivity extends AppCompatActivity {
         renderTrackList();
 
         //Application logic
+        trackPlaying = false;
         addTrackButton = (Button) findViewById(R.id.addTrackButton);
         recordButton = (Button) findViewById(R.id.recordButton);
         playButton = (Button) findViewById(R.id.playButton);
         confirmButton = (Button) findViewById(R.id.confirmButton);
+        discardButton = (Button) findViewById(R.id.discardButton);
         newtrackName = (EditText) findViewById(R.id.newTrackName);
-        //audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Record1.mp3";
         recordButton.setEnabled(false);
         playButton.setEnabled(false);
         confirmButton.setEnabled(false);
+        discardButton.setEnabled(false);
         alertDialog = new AlertDialog.Builder(this);
 
         addTrackButton.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +108,12 @@ public class ProjectActivity extends AppCompatActivity {
                 onConfirmClick();
             }
         });
+        discardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDiscardClick();
+            }
+        });
     }
 
     public void onNewTrackClick(){
@@ -125,7 +137,7 @@ public class ProjectActivity extends AppCompatActivity {
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
                 mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-                audioFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/" + projectName + "/tracks/" + newtrackName.getText() + ".mp3";
+                audioFilePath = projectFolderPath + "tracks/" + newtrackName.getText() + ".mp3";
                 mediaRecorder.setOutputFile(audioFilePath);
                 mediaRecorder.prepare();
                 recordButton.setEnabled(true);
@@ -139,6 +151,7 @@ public class ProjectActivity extends AppCompatActivity {
             mediaRecorder.release();
             playButton.setEnabled(true);
             confirmButton.setEnabled(true);
+            discardButton.setEnabled(true);
             recordButton.setText("RECORD");
         }
     }
@@ -147,9 +160,26 @@ public class ProjectActivity extends AppCompatActivity {
         if (playButton.getText().equals("PLAY")) {
             playButton.setText("STOP");
             recordButton.setEnabled(false);
+            confirmButton.setEnabled(false);
+            discardButton.setEnabled(false);
             try {
-                mediaPlayer = new MediaPlayer();
+                if(mediaPlayer == null){
+                    mediaPlayer = new MediaPlayer();
+                }
+                else{
+                    mediaPlayer.release();
+                    mediaPlayer = new MediaPlayer();
+                }
                 mediaPlayer.setDataSource(audioFilePath);
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        playButton.setText("PLAY");
+                        recordButton.setEnabled(true);
+                        confirmButton.setEnabled(true);
+                        discardButton.setEnabled(true);
+                    }
+                });
                 mediaPlayer.prepare();
                 mediaPlayer.start();
             }
@@ -159,6 +189,8 @@ public class ProjectActivity extends AppCompatActivity {
             mediaPlayer.stop();
             mediaPlayer.release();
             recordButton.setEnabled(true);
+            confirmButton.setEnabled(true);
+            discardButton.setEnabled(true);
             playButton.setText("PLAY");
         }
     }
@@ -175,7 +207,23 @@ public class ProjectActivity extends AppCompatActivity {
         newTrack.track = track;
         project.AddTrack(newTrack);
         helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+        recordButton.setEnabled(false);
+        playButton.setEnabled(false);
+        confirmButton.setEnabled(false);
+        discardButton.setEnabled(false);
         renderTrackList();
+    }
+
+    public void onDiscardClick(){
+        if (audioFilePath != null){
+            mediaPlayer.release();
+            helpers.deleteFile(audioFilePath);
+            audioFilePath = null;
+            recordButton.setEnabled(true);
+            playButton.setEnabled(false);
+            confirmButton.setEnabled(false);
+            discardButton.setEnabled(false);
+        }
     }
 
     public void renderTrackList(){
@@ -186,6 +234,7 @@ public class ProjectActivity extends AppCompatActivity {
         }
         ArrayAdapter adapter = new ArrayAdapter(this, R.layout.track_list_layout, data);
         trackList.setAdapter(adapter);
+        trackList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         trackList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -205,7 +254,13 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void playMusic(String path){
         try {
-            mediaPlayer = new MediaPlayer();
+            if(mediaPlayer == null){
+                mediaPlayer = new MediaPlayer();
+            }
+            else{
+                mediaPlayer.release();
+                mediaPlayer = new MediaPlayer();
+            }
             mediaPlayer.setDataSource(path);
             mediaPlayer.prepare();
             mediaPlayer.start();

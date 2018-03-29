@@ -94,4 +94,15 @@ public class Helpers {
         }
         return ret;
     }
+
+    public static boolean deleteFile(String path){
+        File file = new File(path);
+        if (!file.exists()){
+            return true;
+        }
+        else{
+            file.delete();
+            return true;
+        }
+    }
 }

@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -32,10 +33,10 @@ public class ProjectActivity extends AppCompatActivity {
     Button playButton;
     Button confirmButton;
     Button discardButton;
+    Button saveButton;
     EditText newtrackName;
     ListView trackList;
     String audioFilePath;
-    Helpers helpers;
     Boolean trackPlaying;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +44,8 @@ public class ProjectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_project);
 
         //Read the list of all projects
-        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/projects.json";
-        helpers = new Helpers();
-        projectList = helpers.readFromFile(projectsFilePath);
+        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getString(R.string.app_name) + "/projects.json";
+        projectList = Helpers.readFromFile(projectsFilePath);
 
         //Get the new project name
         Bundle extras = getIntent().getExtras();
@@ -59,7 +59,7 @@ public class ProjectActivity extends AppCompatActivity {
             finish();
         }
 
-        projectFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/" + projectName + "/";
+        projectFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getString(R.string.app_name) + "/" + projectName + "/";
 
         for(int i=0; i<projectList.projects.size(); i++){
             if(projectList.projects.get(i).projectName.equals(projectName)){
@@ -77,6 +77,7 @@ public class ProjectActivity extends AppCompatActivity {
         playButton = (Button) findViewById(R.id.playButton);
         confirmButton = (Button) findViewById(R.id.confirmButton);
         discardButton = (Button) findViewById(R.id.discardButton);
+        saveButton = (Button) findViewById(R.id.saveButton);
         newtrackName = (EditText) findViewById(R.id.newTrackName);
         recordButton.setEnabled(false);
         playButton.setEnabled(false);
@@ -112,6 +113,12 @@ public class ProjectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onDiscardClick();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveProject();
             }
         });
     }
@@ -206,7 +213,6 @@ public class ProjectActivity extends AppCompatActivity {
         track.TrackId = UUID.randomUUID().toString();
         newTrack.track = track;
         project.AddTrack(newTrack);
-        helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
         recordButton.setEnabled(false);
         playButton.setEnabled(false);
         confirmButton.setEnabled(false);
@@ -214,10 +220,14 @@ public class ProjectActivity extends AppCompatActivity {
         renderTrackList();
     }
 
+    public void saveProject(){
+        Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+    }
+
     public void onDiscardClick(){
         if (audioFilePath != null){
             mediaPlayer.release();
-            helpers.deleteFile(audioFilePath);
+            Helpers.deleteFile(audioFilePath);
             audioFilePath = null;
             recordButton.setEnabled(true);
             playButton.setEnabled(false);
@@ -228,28 +238,9 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void renderTrackList(){
         trackList = (ListView) findViewById(R.id.trackList);
-        ArrayList<String> data = new ArrayList<String>();
-        for (int i=0; i<project.tracks.size(); i++){
-            data.add(project.tracks.get(i).track.TrackName);
-        }
-        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.track_list_layout, data);
+        TrackListAdapter adapter = new TrackListAdapter(this, R.layout.track_list_layout, project.tracks);
         trackList.setAdapter(adapter);
         trackList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        trackList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String trackName = trackList.getAdapter().getItem(position).toString();
-                CapellaTrack playTrack = null;
-                for(int i=0; i<project.tracks.size(); i++){
-                    if (project.tracks.get(i).track.TrackName.equals(trackName)){
-                        playTrack = project.tracks.get(i).track;
-                    }
-                }
-                if (playTrack != null){
-                    playMusic(playTrack.FilePath);
-                }
-            }
-        });
     }
 
     public void playMusic(String path){

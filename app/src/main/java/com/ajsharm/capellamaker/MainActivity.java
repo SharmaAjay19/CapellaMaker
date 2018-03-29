@@ -35,24 +35,22 @@ public class MainActivity extends AppCompatActivity {
     AlertDialog.Builder alertDialog;
     AllProjects projectList;
     String projectsFilePath;
-    Helpers helpers;
     ArrayAdapter adapter;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        helpers.createDirIfNotExists("CapellaMaker");
-        helpers = new Helpers();
+        Helpers.createDirIfNotExists(getString(R.string.app_name));
         alertDialog = new AlertDialog.Builder(this);
         listView = (ListView) findViewById(R.id.yourProjectsList);
         newProjectButton = (Button) findViewById(R.id.newProjectButton);
         newProjectName = (EditText) findViewById(R.id.newProjectName);
-        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker/projects.json";
-        projectList = helpers.readFromFile(projectsFilePath);
+        projectsFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + getString(R.string.app_name) + "/projects.json";
+        projectList = Helpers.readFromFile(projectsFilePath);
         if (projectList == null){
             projectList = new AllProjects();
-            helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+            Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
         }
         else{
             alert(Integer.toString(projectList.projects.size()) + " projects loaded!");
@@ -88,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
             //Create new project, add it to list and dump to file.
             CapellaProject project = new CapellaProject(projectName);
             projectList.projects.add(project);
-            helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
+            Helpers.dumpToFile(projectsFilePath, projectList, getApplicationContext());
 
             //Create project directory and tracks folder
-            String projectFolderPath = "CapellaMaker/" + projectName;
-            helpers.createDirIfNotExists(projectFolderPath + "/tracks/");
+            String projectFolderPath = getString(R.string.app_name) + "/" + projectName;
+            Helpers.createDirIfNotExists(projectFolderPath + "/tracks/");
             Intent i = new Intent(this, ProjectActivity.class);
             i.putExtra("projectName", projectName);
             startActivityForResult(i, 0);

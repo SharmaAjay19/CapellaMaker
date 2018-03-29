@@ -1,7 +1,9 @@
 package com.ajsharm.capellamaker;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,7 +24,13 @@ import java.io.OutputStreamWriter;
  */
 
 public class Helpers {
-    public AllProjects readFromFile(String filePath){
+    public static MediaPlayer mediaPlayer;
+
+    public Helpers(){
+        this.mediaPlayer = new MediaPlayer();
+    }
+
+    public static AllProjects readFromFile(String filePath){
         Gson gson = new Gson();
         try {
             AllProjects projects = (AllProjects) gson.fromJson(getStringFromFile(filePath), AllProjects.class);
@@ -33,7 +41,7 @@ public class Helpers {
         }
     }
 
-    public void dumpToFile(String filePath, AllProjects projectList, Context context){
+    public static void dumpToFile(String filePath, AllProjects projectList, Context context){
         Gson gson = new Gson();
         try{
             String content = gson.toJson(projectList);
@@ -65,7 +73,7 @@ public class Helpers {
         return ret;
     }
 
-    private void writeToFile(String data,Context context, String filePath) {
+    private static void writeToFile(String data,Context context, String filePath) {
         try {
             File root = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/CapellaMaker", "");
             if (!root.exists()) {
@@ -104,5 +112,21 @@ public class Helpers {
             file.delete();
             return true;
         }
+    }
+
+    public static void playMusic(String path){
+        try {
+            if(mediaPlayer == null){
+                mediaPlayer = new MediaPlayer();
+            }
+            else{
+                mediaPlayer.release();
+                mediaPlayer = new MediaPlayer();
+            }
+            mediaPlayer.setDataSource(path);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        }
+        catch(Exception e) {}
     }
 }

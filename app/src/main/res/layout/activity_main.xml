@@ -8,41 +8,41 @@
     tools:context="com.ajsharm.capellamaker.MainActivity">
 
             <LinearLayout
-                android:layout_width="377dp"
-                android:layout_height="496dp"
-                android:orientation="vertical"
-                tools:layout_editor_absoluteY="7dp"
-                tools:layout_editor_absoluteX="8dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.1"
                     android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/newProjectButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.2"
+                        android:layout_height="match_parent"
                         android:text="NEW" />
 
                     <EditText
                         android:id="@+id/newProjectName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.8"
                         android:text="ProjectName" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="31dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.05"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/yourProjects"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
                         android:text="Your Projects"
                         android:textColor="@android:color/black"
                         android:textSize="18sp"
@@ -52,7 +52,8 @@
                 <LinearLayout
                     android:id="@+id/listViewLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.85"
                     android:orientation="vertical">
 
                     <ListView

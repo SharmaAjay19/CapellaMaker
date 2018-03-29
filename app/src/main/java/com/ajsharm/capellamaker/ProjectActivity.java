@@ -131,7 +131,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     public void onRecordClick(){
-        if (recordButton.getText().equals("RECORD")) {
+        if (recordButton.getText().equals("REC")) {
             if (newtrackName.getText() == null || newtrackName.getText().equals("Track Name")){
                 alert("Please enter a valid track name");
                 return;
@@ -156,13 +156,14 @@ public class ProjectActivity extends AppCompatActivity {
             playButton.setEnabled(true);
             confirmButton.setEnabled(true);
             discardButton.setEnabled(true);
-            recordButton.setText("RECORD");
+            recordButton.setText("REC");
         }
     }
 
     public void onPlayClick(){
         if (playButton.getText().equals("PLAY")) {
             playButton.setText("STOP");
+            playButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, android.R.drawable.ic_media_pause);
             recordButton.setEnabled(false);
             confirmButton.setEnabled(false);
             discardButton.setEnabled(false);
@@ -179,6 +180,7 @@ public class ProjectActivity extends AppCompatActivity {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         playButton.setText("PLAY");
+                        playButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, android.R.drawable.ic_media_play);
                         recordButton.setEnabled(true);
                         confirmButton.setEnabled(true);
                         discardButton.setEnabled(true);
@@ -196,6 +198,7 @@ public class ProjectActivity extends AppCompatActivity {
             confirmButton.setEnabled(true);
             discardButton.setEnabled(true);
             playButton.setText("PLAY");
+            playButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, android.R.drawable.ic_media_play);
         }
     }
 

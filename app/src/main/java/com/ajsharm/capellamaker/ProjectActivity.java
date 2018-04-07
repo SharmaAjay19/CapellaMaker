@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class ProjectActivity extends AppCompatActivity {
@@ -30,6 +32,7 @@ public class ProjectActivity extends AppCompatActivity {
     Button confirmButton;
     Button discardButton;
     Button saveButton;
+    Button playAllButton;
     EditText newtrackName;
     ListView trackList;
     String audioFilePath;
@@ -75,6 +78,7 @@ public class ProjectActivity extends AppCompatActivity {
         confirmButton = (Button) findViewById(R.id.confirmButton);
         discardButton = (Button) findViewById(R.id.discardButton);
         saveButton = (Button) findViewById(R.id.saveButton);
+        playAllButton = (Button) findViewById(R.id.playAllButton);
         newtrackName = (EditText) findViewById(R.id.newTrackName);
         recordButton.setEnabled(false);
         playButton.setEnabled(false);
@@ -118,6 +122,36 @@ public class ProjectActivity extends AppCompatActivity {
                 saveProject();
             }
         });
+        playAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                playAll();
+            }
+        });
+    }
+
+    public void playAll(){
+        ArrayList<MediaPlayer> players = new ArrayList<MediaPlayer>();
+        for(int i=0; i<this.project.tracks.size(); i++){
+            try {
+                MediaPlayer tempPlayer = new MediaPlayer();
+                tempPlayer.setDataSource(this.project.tracks.get(i).track.FilePath);
+                tempPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        mediaPlayer.release();
+                    }
+                });
+                tempPlayer.prepare();
+                players.add(tempPlayer);
+            }
+            catch (Exception e){alert(e.toString());}
+        }
+        for (int i=0; i<players.size(); i++){
+            players.get(i).start();
+        }
+        players = null;
+        System.gc();
     }
 
     public void onNewTrackClick(){
